@@ -4,7 +4,7 @@ const teamActivities = require('./teamRoutes');
 const proveActivities = require('./proveRoutes');
 const admin = require('./shopRoutes/admin');
 const shop = require('./shopRoutes/shop');
-const auth = require('./ShopRoutes/auth');
+const auth = require('./shopRoutes/auth');
 
 
   
