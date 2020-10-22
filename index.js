@@ -7,7 +7,9 @@ const mongoose = require('mongoose');
 const User = require('./models/user');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
+const csrf = require('csurf');
 const PORT = process.env.PORT || 5005 // So we can run on heroku || (OR) localhost:5000
+
 
 
 
@@ -36,7 +38,10 @@ const store = new MongoDBStore({
   collection: 'sessions'
 });
 
+const csrfProtection = csrf();
+
 app.use(session({secret: 'my secret', resave: false, saveUninitialized: false, store: store}));
+app.use(csrfProtection);
 app.use(cors(corsOptions));
 
 app.use((req, res, next) => {
@@ -45,10 +50,21 @@ app.use((req, res, next) => {
   }
   User.findById(req.session.user._id)
     .then(user => {
-      req.session.user = user;
+      if(!user) {
+        return next();
+      }
+      req.user = user;
       next();
     })
-    .catch(err => console.log(err));
+    // .catch(err => console.log(err));
+    .catch(err => {
+      next(new Error(err));
+    });
+});
+
+app.use((req, res, next)=> {
+ res.locals.isAuthenticated = req.session.isLoggedIn;
+ res.locals.csrfToken = req.csrfToken();
 });
 
 // Route setup. You can implement more in the future!
@@ -74,19 +90,6 @@ app
    
 mongoose.connect(MONGODB_URL, options)
   .then(result => {
-    User.findOne().then(user => {
-      if(!user)
-      {
-        const user = new User({
-          name: 'Ose1',
-          email: 'Ose@test.com',
-          cart:  {
-            items: []
-          }
-        });
-        user.save();
-      }
-    });
      // This should be your user handling code implement following the course videos
     app.listen(PORT);
   })
