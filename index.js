@@ -8,6 +8,7 @@ const User = require('./models/user');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
+const flash = require('connect-flash');
 const PORT = process.env.PORT || 5005 // So we can run on heroku || (OR) localhost:5000
 
 
@@ -40,8 +41,11 @@ const store = new MongoDBStore({
 
 const csrfProtection = csrf();
 
+app.use(bodyParser({extended: false})) // For parsing the body of a POST
 app.use(session({secret: 'my secret', resave: false, saveUninitialized: false, store: store}));
 app.use(csrfProtection);
+app.use(flash());
+
 app.use(cors(corsOptions));
 
 app.use((req, res, next) => {
@@ -65,7 +69,10 @@ app.use((req, res, next) => {
 app.use((req, res, next)=> {
  res.locals.isAuthenticated = req.session.isLoggedIn;
  res.locals.csrfToken = req.csrfToken();
+ next();
 });
+
+
 
 // Route setup. You can implement more in the future!
 const routes = require('./routes');
@@ -74,7 +81,7 @@ app
    .use(express.static(path.join(__dirname, 'public')))
    .set('views', path.join(__dirname, 'views'))
    .set('view engine', 'ejs')
-   .use(bodyParser({extended: false})) // For parsing the body of a POST
+   
    .use('/', routes)
    .get('/', (req, res, next) => {
      // This is the primary index, always handled last. 
