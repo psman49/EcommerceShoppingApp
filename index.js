@@ -9,6 +9,7 @@ const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
 const flash = require('connect-flash');
+require('dotenv').config()
 const PORT = process.env.PORT || 5005 // So we can run on heroku || (OR) localhost:5000
 
 

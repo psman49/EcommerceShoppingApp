@@ -7,7 +7,7 @@ const User = require('../models/user');
 
 const transporter = nodemailer.createTransport(sendgridTransport({
   auth: {
-    api_key:'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'
+    api_key:process.env.SENDGRID_KEY
   }
 }));
 
@@ -142,19 +142,21 @@ exports.postReset = (req, res, next) => {
      }
      user.resetToken = token;
      user.resetTokenExpiration = Date.now() + 3600000;
-     return user.save();
+     return user.save()
+     .then(result => {
+      res.redirect('/shop');
+     transporter.sendMail({
+       to: req.body.email,
+       from: 'samuelpo49@gmail.com',
+       subject: 'Password Reset',
+       html: `
+       <p>You requested a password reset</p>
+       <p>Click this <a href="http://localhost:5005/auth/reset/${token}">link to set a new password.</p>
+       `
+     });
+
    })
-   .then(result => {
-     res.redirect('/shop');
-    transporter.sendMail({
-      to: req.body.email,
-      from: 'samuelpo49@gmail.com',
-      subject: 'Password Reset',
-      html: `
-      <p>You requested a password reset</p>
-      <p>Click this <a href="http://localhost:5005/auth/reset/${token}">link to set a new password.</p>
-      `
-    });
+   
    })
    .catch(err=> {
      console.log(err);
