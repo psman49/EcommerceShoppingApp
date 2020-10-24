@@ -82,10 +82,11 @@ exports.postEditProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.find({userId: user._id})
+  Product.find({userId: req.user._id})
     // .select('title price -_id')
     // .populate('userId', 'name')
     .then(products => {
+      console.log(req.user);
       console.log(products);
       res.render('pages/shopStuff/admin/products', {
         prods: products,
