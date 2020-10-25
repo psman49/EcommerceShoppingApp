@@ -26,8 +26,9 @@
                 <input
                  class="<%= validationErrors.find(e => e.param === 'password') ? 'invalid' : '' %>"
                  type="password" 
-                name="password" id="password" 
-                value="<%= oldInput.password %>>
+                name="password" 
+                id="password" 
+                value="<%= oldInput.password %>">
             </div>
             <div class="form-control">
                 <label for="confirmPassword">Confirm Password</label>
@@ -36,7 +37,7 @@
                 type="password" 
                 name="confirmPassword" 
                 id="confirmPassword" 
-                value="<%= oldInput.confirmPassword %>>
+                value="<%= oldInput.confirmPassword %>">
             </div>
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <button class="btn" type="submit">Signup</button>

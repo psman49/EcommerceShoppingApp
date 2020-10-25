@@ -61,6 +61,7 @@ router.post('/edit-product',
 
 router.post('/delete-product', isAuth, adminController.postDeleteProduct);
 
+module.exports = router;
 
 // //
 // // /admin/products => GET
@@ -70,4 +71,3 @@ router.post('/delete-product', isAuth, adminController.postDeleteProduct);
 // router.post('/add-product', isAuth, adminController.postAddProduct);
 
 
-module.exports = router;
