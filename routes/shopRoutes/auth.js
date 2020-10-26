@@ -14,7 +14,7 @@ router.get('/signup', authController.getSignup);
 router.post('/login',
 [
     check('email')
-    .isEmpty()
+    .isEmail()
     .withMessage('Please enter a valid email address.')
     .normalizeEmail(),
     check('password','Password has to be Alphanumeric and atleast 6 characters.')
