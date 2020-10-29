@@ -21,8 +21,13 @@ routes
 .use('/auth',auth)
 
 
+
 .get('/', (req, res, next)=> {
     res.render('pages/index', {title: 'Welcome to my CSE341 repo', path: '/'});
+})
+
+.use((req,res,next)=> {
+    res.render('pages/500', {title: '500- some error occurred', path:req.url})
 })
 .use((req,res,next)=> {
     res.render('pages/404', {title: '404 - Page Not Found', path:req.url})

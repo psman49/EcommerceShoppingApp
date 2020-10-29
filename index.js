@@ -47,6 +47,12 @@ app.use(session({secret: 'my secret', resave: false, saveUninitialized: false, s
 app.use(csrfProtection);
 app.use(flash());
 
+app.use((req, res, next)=> {
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken = req.csrfToken();
+  next();
+ });
+
 app.use(cors(corsOptions));
 
 app.use((req, res, next) => {
@@ -64,14 +70,11 @@ app.use((req, res, next) => {
     // .catch(err => console.log(err));
     .catch(err => {
       next(new Error(err));
+      // throw new Error(err);
     });
 });
 
-app.use((req, res, next)=> {
- res.locals.isAuthenticated = req.session.isLoggedIn;
- res.locals.csrfToken = req.csrfToken();
- next();
-});
+
 
 
 
@@ -87,6 +90,10 @@ app
    .get('/', (req, res, next) => {
      // This is the primary index, always handled last. 
      res.render('pages/index', {title: 'Welcome to my CSE341 repo', path: '/'});
+    })
+    .use((req, res, next) => {
+      // 500 page
+      res.render('pages/500', {title: 'Some error occured', path: req.url, isAuthenticated:req.session.isLoggedIn})
     })
    .use((req, res, next) => {
      // 404 page
