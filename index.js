@@ -74,13 +74,11 @@ app.use((req, res, next) => {
     });
 });
 
-
-
-
-
 // Route setup. You can implement more in the future!
 const routes = require('./routes');
+const errorController = require('./Controllers/error');
 
+//app.get('/500', errorController.get500);
 app
    .use(express.static(path.join(__dirname, 'public')))
    .set('views', path.join(__dirname, 'views'))
@@ -91,14 +89,18 @@ app
      // This is the primary index, always handled last. 
      res.render('pages/index', {title: 'Welcome to my CSE341 repo', path: '/'});
     })
-    .use((req, res, next) => {
+
+    .use(errorController.get404)
+
+    // .use((req, res, next) => {
+    //   // 404 page
+    //   res.render('pages/404', {title: '404 - Page Not Found', path: req.url})
+    // })
+    .use((error,req, res, next) => {
       // 500 page
-      res.render('pages/500', {title: 'Some error occured', path: req.url, isAuthenticated:req.session.isLoggedIn})
+      res.render('pages/500', {title: 'Error!', path: req.url, isAuthenticated:req.session.isLoggedIn})
     })
-   .use((req, res, next) => {
-     // 404 page
-     res.render('pages/404', {title: '404 - Page Not Found', path: req.url})
-   })
+   
 
     //session middleware
 
