@@ -9,6 +9,7 @@ const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
 const flash = require('connect-flash');
+const multer = require('multer');
 require('dotenv').config()
 const PORT = process.env.PORT || 5005 // So we can run on heroku || (OR) localhost:5000
 
@@ -42,7 +43,25 @@ const store = new MongoDBStore({
 
 const csrfProtection = csrf();
 
-app.use(bodyParser({extended: false})) // For parsing the body of a POST
+const fileStorage = multer.diskStorage({
+  destinate: (req, file,cb)=> {
+    cb(null, 'images');
+  },
+  filename: (req,file,cb) => {
+    cb(null, new Date().toISOString() + '-' + file.originalname);
+  }
+});
+
+const fileFilter = () => {
+  if(file.mimetype === "image/png" || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg'){
+    cb(null,true);
+  }else {
+    cb(null,false);
+  } 
+};
+
+app.use(bodyParser({extended: false})); // For parsing the body of a POST
+app.use(multer({storage: fileStorage, fileFilter: fileFilter }).single('image'));
 app.use(session({secret: 'my secret', resave: false, saveUninitialized: false, store: store}));
 app.use(csrfProtection);
 app.use(flash());
@@ -81,6 +100,7 @@ const errorController = require('./Controllers/error');
 //app.get('/500', errorController.get500);
 app
    .use(express.static(path.join(__dirname, 'public')))
+   .use('/images',express.static(path.join(__dirname, 'images')))
    .set('views', path.join(__dirname, 'views'))
    .set('view engine', 'ejs')
    
@@ -97,14 +117,15 @@ app
     //   res.render('pages/404', {title: '404 - Page Not Found', path: req.url})
     // })
     .use((error,req, res, next) => {
+      console.log(error);
       // 500 page
-      res.render('pages/500', {title: 'Error!', path: req.url, isAuthenticated:req.session.isLoggedIn})
+      res.render('pages/500', 
+      {pageTitle:'Error!', 
+      path: req.url, 
+      isAuthenticated:req.session.isLoggedIn})
     })
    
-
-    //session middleware
-
-   
+    //session middleware  
 mongoose.connect(MONGODB_URL, options)
   .then(result => {
      // This should be your user handling code implement following the course videos
