@@ -44,7 +44,7 @@ const store = new MongoDBStore({
 const csrfProtection = csrf();
 
 const fileStorage = multer.diskStorage({
-  destinate: (req, file,cb)=> {
+  destination: (req, file,cb)=> {
     cb(null, 'images');
   },
   filename: (req,file,cb) => {
@@ -52,7 +52,7 @@ const fileStorage = multer.diskStorage({
   }
 });
 
-const fileFilter = () => {
+const fileFilter = (req, file, cb) => {
   if(file.mimetype === "image/png" || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg'){
     cb(null,true);
   }else {
@@ -60,7 +60,7 @@ const fileFilter = () => {
   } 
 };
 
-app.use(bodyParser({extended: false})); // For parsing the body of a POST
+app.use(bodyParser.urlencoded({extended: false})); // For parsing the body of a POST
 app.use(multer({storage: fileStorage, fileFilter: fileFilter }).single('image'));
 app.use(session({secret: 'my secret', resave: false, saveUninitialized: false, store: store}));
 app.use(csrfProtection);
@@ -111,14 +111,8 @@ app
     })
 
     .use(errorController.get404)
-
-    // .use((req, res, next) => {
-    //   // 404 page
-    //   res.render('pages/404', {title: '404 - Page Not Found', path: req.url})
-    // })
     .use((error,req, res, next) => {
       console.log(error);
-      // 500 page
       res.render('pages/500', 
       {pageTitle:'Error!', 
       path: req.url, 
@@ -128,7 +122,6 @@ app
     //session middleware  
 mongoose.connect(MONGODB_URL, options)
   .then(result => {
-     // This should be your user handling code implement following the course videos
     app.listen(PORT);
   })
   .catch(err => {

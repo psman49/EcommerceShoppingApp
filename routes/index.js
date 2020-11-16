@@ -27,10 +27,10 @@ routes
 })
 
 .use((req,res,next)=> {
-    res.render('pages/500', {title: '500- some error occurred', path:req.url})
+    res.render('pages/500', {pageTitle: '500- some error occurred', path:req.url})
 })
 .use((req,res,next)=> {
-    res.render('pages/404', {title: '404 - Page Not Found', path:req.url})
+    res.render('pages/404', {pageTitle: '404 - Page Not Found', path:req.url})
 })
 
 
