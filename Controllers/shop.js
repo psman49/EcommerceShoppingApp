@@ -132,7 +132,7 @@ exports.postCartDeleteProduct = (req, res, next) => {
    });
 };
 
-exports.getCheckout = (res,req, next) => {
+exports.getCheckout = (req,res, next) => {
   let products;
   let total = 0;
   req.user
@@ -258,7 +258,7 @@ exports.getInvoice = (req, res, next) => {
    if(!order) {
      return next(new Error('No order found.'));
    }
-   if(order.user.userId.toString() === req.user._id.toString()) {
+   if(order.user.userId.toString() !== req.user._id.toString()) {
      return next(new Error('Unauthorized'));
    }
     const invoiceName = 'invoice-' + orderId + '.pdf';
