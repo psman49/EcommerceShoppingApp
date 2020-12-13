@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../../../includes/head.ejs %>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/scripts/prove11.js"></script>
+    <link rel="stylesheet" href="/store/CSS/main.css">
+</head>
+<body>
+    <% include ../../../includes/navigation.ejs  %> 
+    <div>
+        <h1><%= title %></h1>
+        <p></p>
+    </div>
+    <h2>Heroes</h2>
+        <ul id="get"></ul>
+        <h3>Add a New Hero</h3>
+        <p>(Enter an existing hero's name, and their power will update to the power you enter.)</p>
+        <div>
+            <label for="insert">Name of Hero:</label>
+            <input type="hidden" id="_avenger5" value="<%= csrfToken %>">
+            <input class="insert" type="text" name="insert" id="insert">
+            <label for="power">Hero's Power:</label>
+            <input class="power" type="text"name="power" id="power">
+            <button class="btn" onclick="postRequest()">Insert</button>
+        </div>
+</body>
+</html>

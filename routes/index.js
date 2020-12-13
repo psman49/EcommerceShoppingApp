@@ -14,7 +14,7 @@ const User = require('../models/user');
 
 routes
 .use('/classActivities', classActivities)
-.use('teamActivities', teamActivities)
+.use('/teamActivities', teamActivities)
 .use('/proveAssignments',proveActivities)
 .use('/shop',shop)
 .use('/admin',admin)

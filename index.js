@@ -61,10 +61,17 @@ const fileFilter = (req, file, cb) => {
 };
 
 app.use(bodyParser.urlencoded({extended: false})); // For parsing the body of a POST
+app.use(bodyParser.json()); 
 app.use(multer({storage: fileStorage, fileFilter: fileFilter }).single('image'));
 app.use(session({secret: 'my secret', resave: false, saveUninitialized: false, store: store}));
 app.use(csrfProtection);
 app.use(flash());
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS');
+  next();
+})
 
 app.use((req, res, next)=> {
   res.locals.isAuthenticated = req.session.isLoggedIn;
@@ -122,7 +129,13 @@ app
     //session middleware  
 mongoose.connect(MONGODB_URL, options)
   .then(result => {
-    app.listen(PORT);
+    const server = app.listen(PORT);
+    const io = require ('socket.io')(server);
+    io.on('connection', socket => {
+      socket.on('broadcast', data => {
+        socket.broadcast.emit('broadcast', data)
+      })
+    })  
   })
   .catch(err => {
     console.log(err);
